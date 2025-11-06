@@ -11,7 +11,7 @@ const app = express();
 
 // ====================== CORS CONFIG ======================
 app.use(cors({
-  origin: "https://stockpilot-dashboard.onrender.com", // your frontend URL
+  origin: "https://stockpilot-dashboard.onrender.com", // frontend URL
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -22,23 +22,26 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, "public")));
-
 // ====================== ROUTERS ======================
 import userRouter from "./routes/userRoutes.js";
 import tradeRouter from "./routes/tradeRoutes.js";
 import dataRouter from "./routes/dataRoutes.js";
 
-// API routes
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/users", tradeRouter); // /api/v1/users/trade
-app.use("/api/v1/users", dataRouter);  // /api/v1/users/holdingData
+app.use("/api/v1/users", tradeRouter);
+app.use("/api/v1/users", dataRouter);
 
-// ====================== REACT ROUTES CATCH-ALL ======================
-// Serve React app for all frontend routes that are NOT API calls
-app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+// ====================== SERVE FRONTEND ======================
+// Serve React static files from the Vite build
+app.use(express.static(path.join(__dirname, "../dashboard/dist")));
+
+// Catch-all: serve index.html for any route not starting with /api
+app.use((req, res, next) => {
+  if (!req.path.startsWith("/api")) {
+    res.sendFile(path.join(__dirname, "../dashboard/dist/index.html"));
+  } else {
+    next();
+  }
 });
 
 // ====================== ERROR HANDLING ======================
