@@ -37,16 +37,16 @@ const registerUser=asynchandler(async(req,res)=>{
         throw new ApiErrorHandler(404,"images not uploaded")
     }
     //UPLOAD PHOTO TO CLOUDINARY
-    const uploadedFile=await uploadOnCloudinary(avatarLocalFile);
+    const uploadedFileURL=await uploadOnCloudinary(avatarLocalFile);
     //to check if pic is uploaded on clousinary
-    if(!uploadedFile.url){
+    if(!uploadedFileURL){
         throw new ApiErrorHandler(201,"uploading on cloudinary failed")
     }
     //save data to mongodb
     const user=await User.create({
         username:username.toLowerCase(),
         fullName:fullName.toLowerCase(),
-        email,password,dob,avatar:uploadedFile.url
+        email,password,dob,avatar:uploadedFileURL
     })
     //REMOVE PASSWORD AND REGRESHtOKEN FIELD
     const createdUser=await User.findById(user._id).select("-password -refreshToken");
@@ -109,6 +109,7 @@ const logoutUser=asynchandler(async(req,res)=>{
 
 })
 
+
 const userDetails=asynchandler(async(req,res)=>{
     let user=req.auth;
     return res.status(200).json(new ApiResponse(200,user,"fetch user data successfully"));
@@ -147,12 +148,12 @@ const updateProfilepic=asynchandler(async(req,res)=>{
     if (!avatarLocalPath) {
        throw new ApiErrorHandler(400,"Avatar file is missing");
     }
-    const avatar=await uploadOnCloudinary(avatarLocalPath);
-    if (!avatar.url) {
+    const avatarURL=await uploadOnCloudinary(avatarLocalPath);
+    if (!avatarURL) {
         throw new ApiErrorHandler(400,"Error while uploading on cloudinary");
     }
 
-    const user=await User.findByIdAndUpdate(req.auth?._id,{$set:{avatar:avatar.url}},{new :true}).select("-password -refreshToken");
+    const user=await User.findByIdAndUpdate(req.auth?._id,{$set:{avatar:avatarURL}},{new :true}).select("-password -refreshToken");
     return res.status(200)
     .json(new ApiResponse(200, { user }, "User profile updated successfully!"));
 
