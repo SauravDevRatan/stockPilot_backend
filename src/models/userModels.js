@@ -11,15 +11,17 @@ const userSchema=mongoose.Schema({
     password:{type:String,required:true},
     dob:{type:Date,required:true},
     avatar:{type:String},
-    holding:{
+    balance:{type:Number,default:100000},
+    holding:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Holding"
-    },
+    }],
+    refreshToken:{type:String},
     order:
-    {
+    [{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Order"
-    }
+    }]
 },{ timestamps: true });
 
 userSchema.pre("save",async function(next){
@@ -29,7 +31,7 @@ userSchema.pre("save",async function(next){
     next();
 })
 
-userSchema.methods.isPasswordCorrect=async function (password) {
+userSchema.methods.isPasswordCorrect=async function(password) {
     return await bcrypt.compare(password,this.password)
 }
 

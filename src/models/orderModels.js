@@ -8,4 +8,4 @@ const orderSchema=mongoose.Schema({
     date: {type: Date,default: Date.now,} 
 },{ timestamps: true });
 
-export const Holding=mongoose.model("Order",orderSchema);
+export const Order=mongoose.model("Order",orderSchema);

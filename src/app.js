@@ -18,4 +18,10 @@ app.use(cookieParser());
 import userRouter from "./routes/userRoutes.js";
 app.use("/api/v1/users",userRouter);
 
+import tradeRouter from "./routes/tradeRoutes.js";
+app.use("/api/v1/users",tradeRouter);
+
+import data from "./routes/dataRoutes.js";
+app.use("/api/v1/users",data);
+ 
 export {app};
