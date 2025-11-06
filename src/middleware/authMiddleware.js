@@ -6,7 +6,15 @@ import {User} from "../models/userModels.js";
 
 export const verifyJwt=asynchandler(async(req,res,next)=>{
    
-     const token=req.cookies?.accessToken ;
+     let token = req.cookies?.accessToken;
+
+    if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      throw new ApiErrorHandler(401, "Unauthorized — No token provided");
+    }
      if (!token) {
          throw new ApiErrorHandler(400,"Not authorised — No token provided");
      }
