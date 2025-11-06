@@ -82,7 +82,9 @@ const loginUser=asynchandler(async(req,res)=>{
 
     const options={
         httpOnly:true,
-        secure:true
+        secure:true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24,
     }
 
     return res.status(200)
@@ -96,10 +98,12 @@ const logoutUser=asynchandler(async(req,res)=>{
     let user=await User.findByIdAndUpdate(req.auth._id,{$set:{refreshToken:undefined}},{new:true}) ;
      const options={
         httpOnly:true,
-        secure:true
+        secure:true,
+        sameSite: "none"
     };
 
-    return res.status(200).clearCookie("accessToken",options)
+    return res.status(200)
+    .clearCookie("accessToken",options)
     .clearCookie("refreshToken",options)
     .json(new ApiResponse(200,{},"userlogged Out"))
 
