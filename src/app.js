@@ -37,10 +37,8 @@ app.use("/api/v1/users", dataRouter);  // /api/v1/users/holdingData
 
 // ====================== REACT ROUTES CATCH-ALL ======================
 // Serve React app for all frontend routes that are NOT API calls
-app.get("*", (req, res) => {
-  if (!req.path.startsWith("/api/")) {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-  }
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // ====================== ERROR HANDLING ======================
