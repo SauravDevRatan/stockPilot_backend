@@ -12,11 +12,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// Handle preflight requests for all routes
-app.options("*", cors({
-  origin: "https://stockpilot-dashboard.onrender.com",
-  credentials: true,
-}));
+
 
 // ====================== MIDDLEWARE ======================
 app.use(express.json({ limit: "16kb" }));
