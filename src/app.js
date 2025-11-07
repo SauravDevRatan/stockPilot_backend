@@ -4,12 +4,18 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-// ====================== CORS CONFIG ======================
+// ====================== CORS ======================
 app.use(cors({
   origin: "https://stockpilot-dashboard.onrender.com",
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+// Preflight handler
+app.options("/*", cors({
+  origin: "https://stockpilot-dashboard.onrender.com",
+  credentials: true,
 }));
 
 // ====================== MIDDLEWARE ======================
@@ -17,13 +23,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
-// ====================== PRE-FLIGHT ======================
-app.options("*", cors({
-  origin: "https://stockpilot-dashboard.onrender.com",
-  credentials: true,
-}));
-
-// ====================== ROUTERS ======================
+// ====================== API ROUTERS ======================
 import userRouter from "./routes/userRoutes.js";
 import tradeRouter from "./routes/tradeRoutes.js";
 import dataRouter from "./routes/dataRoutes.js";
