@@ -12,8 +12,8 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// Preflight handler
-app.options("/*", cors({
+// Preflight handler (fixed)
+app.options(/.*/, cors({
   origin: "https://stockpilot-dashboard.onrender.com",
   credentials: true,
 }));
