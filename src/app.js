@@ -1,17 +1,12 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
 // ====================== CORS CONFIG ======================
 app.use(cors({
-  origin: "https://stockpilot-dashboard.onrender.com", // frontend URL
+  origin: "https://stockpilot-dashboard.onrender.com",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -22,6 +17,12 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
+// ====================== PRE-FLIGHT ======================
+app.options("*", cors({
+  origin: "https://stockpilot-dashboard.onrender.com",
+  credentials: true,
+}));
+
 // ====================== ROUTERS ======================
 import userRouter from "./routes/userRoutes.js";
 import tradeRouter from "./routes/tradeRoutes.js";
@@ -30,19 +31,6 @@ import dataRouter from "./routes/dataRoutes.js";
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/users", tradeRouter);
 app.use("/api/v1/users", dataRouter);
-
-// ====================== SERVE FRONTEND ======================
-// Serve React static files from the Vite build
-app.use(express.static(path.join(__dirname, "../dashboard/dist")));
-
-// Catch-all: serve index.html for any route not starting with /api
-app.use((req, res, next) => {
-  if (!req.path.startsWith("/api")) {
-    res.sendFile(path.join(__dirname, "../dashboard/dist/index.html"));
-  } else {
-    next();
-  }
-});
 
 // ====================== ERROR HANDLING ======================
 app.use((err, req, res, next) => {
@@ -53,7 +41,6 @@ app.use((err, req, res, next) => {
 });
 
 export { app };
-
 
 // import express from "express";
 // import cors from "cors";
